@@ -44,6 +44,7 @@
     height: 2rem;
     z-index: 10;
     cursor: pointer;
+    position: relative;
 }
 
 .project-btn-cont {
@@ -106,4 +107,44 @@
 
 .to-do-section {
     position: relative;
+    overflow: scroll;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.task-bar {
+    overflow: scroll;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.to-do-bar {
+    display: flex;
+    flex-direction: column;
+    padding: 0.5rem 3rem;
+    gap: 1rem;
+}
+
+.add-task-btn {
+    padding: 0.5rem 0;
+    width: 7rem;
+    background-color: rgb(2, 188, 46);
+    border: 2px solid black;
+    border-radius: 15px;
+    color: white;
+    font-family: 'ralewaythin', 'sans-serif';
+    margin-left: 3rem;
+}
+
+.delete-task-btn {
+    padding: 0.5rem 0;
+    width: 7rem;
+    background-color: rgb(188, 2, 2);
+    border: 2px solid black;
+    border-radius: 15px;
+    color: white;
+    font-family: 'ralewaythin', 'sans-serif';
+    margin-left: 3rem;
 }

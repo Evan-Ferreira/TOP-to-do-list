@@ -12,13 +12,52 @@ class DOM {
         newProject.setAttribute('id', projectName);
         newProject.addEventListener('click', () => {
             selectedProject = projectName;
+            this.showTasks();
         });
         projectBar.appendChild(newProject);
     }
 
     removeProject() {
+        const taskBar = document.querySelector('.task-bar');
         const project = document.getElementById(selectedProject);
+        delete projectMap[selectedProject];
         project.remove();
+        taskBar.innerHTML = '';
+        selectedProject = '';
+    }
+
+    showTasks() {
+        const taskBar = document.querySelector('.task-bar');
+        taskBar.innerHTML = '';
+        const tasks = projectMap[selectedProject];
+        for (let task of tasks) {
+            const addTask = document.createElement('div');
+            addTask.classList.add('to-do-bar');
+            addTask.setAttribute('id', task[0]);
+            const title = document.createElement('h2');
+            const description = document.createElement('p');
+            const priorityBtn = document.createElement('button');
+            const checkedBtn = document.createElement('div');
+            title.textContent = task[0];
+            description.textContent = task[1];
+            if (task[2] === 'high') {
+                priorityBtn.classList.add('high');
+            } else if (task[2] === 'medium') {
+                priorityBtn.classList.add('medium');
+            } else {
+                priorityBtn.classList.add('low');
+            }
+            if (task[3]) {
+                checkedBtn.classList.add('checked');
+            } else {
+                checkedBtn.classList.add('unchecked');
+            }
+            addTask.appendChild(title);
+            addTask.appendChild(description);
+            addTask.appendChild(priorityBtn);
+            addTask.appendChild(checkedBtn);
+            taskBar.appendChild(addTask);
+        }
     }
 }
 
@@ -28,6 +67,8 @@ const initializeProperties = (function () {
     const projectBar = document.getElementsByClassName('project-bar');
     const newProjectBtn = document.querySelector('.new-project');
     const deleteProjectBtn = document.querySelector('.delete-project');
+    const addTaskBtn = document.querySelector('.add-task-btn');
+
     let projectBarOpen = true;
 
     const onclickProps = () => {
@@ -43,9 +84,7 @@ const initializeProperties = (function () {
 
     const createProject = () => {
         newProjectBtn.addEventListener('click', () => {
-            console.log('penis');
             const project = new Project();
-            projectMap.set(project.name, {});
             dom.newProject(project.name);
         });
     };
@@ -55,14 +94,53 @@ const initializeProperties = (function () {
         deleteProjectBtn.addEventListener('click', () => {
             if (selectedProject) {
                 dom.removeProject();
+                for (let arr of projectMap) {
+                    if (arr[0] === selectedProject) {
+                        projectMap.delete(selectedProject);
+                    }
+                }
             }
         });
     };
     removeProject();
+
+    const addTask = () => {
+        addTaskBtn.addEventListener('click', () => {
+            const newTask = new Task();
+            if (selectedProject) {
+                projectMap[selectedProject].push([
+                    newTask.title,
+                    newTask.description,
+                    newTask.priority,
+                    newTask.completed,
+                ]);
+                dom.showTasks();
+            }
+        });
+    };
+    addTask();
 })();
 
 class Project {
     constructor() {
         this.name = prompt('Enter the project name:');
+        this.#initializeMap();
+    }
+
+    #initializeMap() {
+        projectMap[this.name] = [];
+    }
+
+    addTomap(taskTitle, taskObj) {
+        projectMap.get(selectedProject)[taskTitle] = taskObj;
+    }
+}
+
+class Task {
+    constructor() {
+        this.title = prompt('Enter the title of the task');
+        this.description = prompt('Enter the description of the task');
+        this.priority = '';
+        this.completed = false;
     }
 }
