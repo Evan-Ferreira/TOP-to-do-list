@@ -40,23 +40,36 @@ class DOM {
             const checkedBtn = document.createElement('div');
             title.textContent = task[0];
             description.textContent = task[1];
-            if (task[2] === 'high') {
-                priorityBtn.classList.add('high');
-            } else if (task[2] === 'medium') {
-                priorityBtn.classList.add('medium');
+            if (task[2] === 'High') {
+                priorityBtn.textContent = 'High';
+            } else if (task[2] === 'Medium') {
+                priorityBtn.textContent = 'Medium';
             } else {
-                priorityBtn.classList.add('low');
+                priorityBtn.textContent = 'Low';
             }
+            this.buttonColour(priorityBtn);
             if (task[3]) {
-                checkedBtn.classList.add('checked');
+                checkedBtn.textContent = 'X';
             } else {
-                checkedBtn.classList.add('unchecked');
+                checkedBtn.textContent = '';
             }
             addTask.appendChild(title);
             addTask.appendChild(description);
             addTask.appendChild(priorityBtn);
             addTask.appendChild(checkedBtn);
             taskBar.appendChild(addTask);
+        }
+
+        changeButtonColor();
+    }
+
+    buttonColour(priorityBtn) {
+        if (priorityBtn.textContent === 'High') {
+            priorityBtn.setAttribute('style', 'background-color: red');
+        } else if (priorityBtn.textContent === 'Medium') {
+            priorityBtn.setAttribute('style', 'background-color: orange');
+        } else {
+            priorityBtn.setAttribute('style', 'background-color: green');
         }
     }
 }
@@ -140,7 +153,7 @@ class Task {
     constructor() {
         this.title = prompt('Enter the title of the task');
         this.description = prompt('Enter the description of the task');
-        this.priority = '';
+        this.priority = 'Low';
         this.completed = false;
     }
 }
