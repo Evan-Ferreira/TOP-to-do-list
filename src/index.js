@@ -95,6 +95,7 @@ class DOM {
         date.classList.add('due-date');
         priorityBtn.classList.add('btn');
         priorityBtn.classList.add('priority-low');
+        checkbox.classList.add('checkbox');
         title.textContent = task.title;
         description.textContent = task.description;
         date.textContent = task.date;
@@ -105,7 +106,27 @@ class DOM {
         taskCont.appendChild(date);
         taskCont.appendChild(priorityBtn);
         taskCont.appendChild(checkbox);
-        console.log(taskCont);
+        checkbox.addEventListener('click', () => {
+            checkbox.textContent
+                ? ((checkbox.textContent = ''), (task.checked = false))
+                : ((checkbox.textContent = 'X'), (task.checked = false));
+        });
+        priorityBtn.addEventListener('click', () => {
+            priorityBtn.classList.remove('priority-low');
+            priorityBtn.classList.remove('priority-medium');
+            priorityBtn.classList.remove('priority-high');
+            if (priorityBtn.textContent === 'Low') {
+                priorityBtn.classList.add('priority-medium');
+                priorityBtn.textContent = 'Medium';
+            } else if (priorityBtn.textContent === 'Medium') {
+                priorityBtn.classList.add('priority-high');
+                priorityBtn.textContent = 'High';
+            } else {
+                priorityBtn.classList.add('priority-low');
+                priorityBtn.textContent = 'Low';
+            }
+            task.changePriority(priorityBtn.textContent);
+        });
     }
 }
 
@@ -129,7 +150,7 @@ class Task {
         this.title = title;
         this.description = description;
         this.date = format(new Date(), 'MM/dd/yyyy');
-        this.priority = 'low';
+        this.priority = 'Low';
         this.checked = false;
     }
 
@@ -145,7 +166,6 @@ const addEventListeners = (function () {
     const deleteProjectBtn = document.querySelector('.delete-btn.project-btn');
     const addTaskBtn = document.querySelector('.add-btn.task-btn');
     const deleteTaskBtn = document.querySelector('.delete-btn.task-btn');
-    const checkbox = document.querySelector('.checkbox');
 
     toggleProjectBtn.addEventListener('click', () => {
         if (projectBarOpen) {
@@ -171,12 +191,6 @@ const addEventListeners = (function () {
             }
         }
         dom.deleteProject();
-    });
-
-    checkbox.addEventListener('click', () => {
-        checkbox.textContent
-            ? (checkbox.textContent = '')
-            : (checkbox.textContent = 'X');
     });
 
     addTaskBtn.addEventListener('click', () => {
