@@ -80,11 +80,33 @@ class DOM {
         projectTasks.classList.add('project-tasks-selected');
     }
 
+    clickTask() {
+        const tasks = document.querySelectorAll('.task');
+        tasks.forEach((task) => {
+            if (task.querySelector('h2').textContent === selectedTask) {
+                task.classList.add('clicked');
+                console.log('here');
+            }
+        });
+    }
+
+    unclickTask() {
+        const tasks = document.querySelectorAll('.task');
+        tasks.forEach((task) => {
+            task.classList.remove('clicked');
+        });
+    }
+
     addTask(task) {
         const projectTaskCont = document.querySelector(
             '.project-tasks-selected'
         );
         const taskCont = document.createElement('div');
+        taskCont.addEventListener('click', () => {
+            selectedTask = task.title;
+            this.unclickTask();
+            this.clickTask();
+        });
         const title = document.createElement('h2');
         const description = document.createElement('p');
         const date = document.createElement('p');
@@ -126,6 +148,15 @@ class DOM {
                 priorityBtn.textContent = 'Low';
             }
             task.changePriority(priorityBtn.textContent);
+        });
+    }
+
+    removeTask() {
+        const project = document.getElementById(selectedProjectTitle);
+        Array.from(project.children).forEach((task) => {
+            if (task.querySelector('h2').textContent === selectedTask) {
+                task.remove();
+            }
         });
     }
 }
@@ -203,6 +234,17 @@ const addEventListeners = (function () {
             }
         });
         dom.addTask(task);
+    });
+
+    deleteTaskBtn.addEventListener('click', () => {
+        projects.forEach((project) => {
+            project.tasks.forEach((task) => {
+                if (task.title === selectedTask) {
+                    project.removeTask(task);
+                    dom.removeTask();
+                }
+            });
+        });
     });
 })();
 
