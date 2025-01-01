@@ -28,17 +28,18 @@
     width: 20rem;
     background-color: #e3e3e3;
     font-family: 'ralewaythin', sans-serif;
-    gap: 1rem;
+    text-align: center;
 }
 
 .project-btn-cont {
+    margin-top: 1rem;
     display: flex;
     justify-content: center;
     align-items: center;
     gap: 2rem;
 }
 
-.project-btn {
+.btn {
     padding: 0.5rem 0;
     width: 7rem;
     border: none;
@@ -63,6 +64,7 @@
 .task-section {
     display: flex;
     flex-direction: column;
+    width: 100%;
     padding: 2rem 2rem;
     gap: 1rem;
     font-family: 'ralewaythin';
@@ -84,4 +86,46 @@
     position: fixed;
     top: 50vh;
     background-color: gray;
+    cursor: pointer;
+}
+
+.toggle-project-btn:hover {
+    border: 2.5px solid black;
+}
+
+.task {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    width: 100%;
+    border: 1px solid black;
+    padding: 1rem;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.clicked {
+    border: 2px solid black;
+}
+
+.task:hover {
+    border: 2px solid black;
+}
+
+.task button {
+}
+
+.project {
+    background-color: white;
+    color: black;
+    font-size: 1.2rem;
+    margin-top: 1rem;
+    width: 90%;
+    padding: 0.5rem 2rem;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.project:hover {
+    border: 1px solid black;
 }
