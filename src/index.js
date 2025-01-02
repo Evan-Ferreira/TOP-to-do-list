@@ -85,7 +85,6 @@ class DOM {
         tasks.forEach((task) => {
             if (task.querySelector('h2').textContent === selectedTask) {
                 task.classList.add('clicked');
-                console.log('here');
             }
         });
     }
@@ -174,6 +173,14 @@ class Project {
     removeTask(task) {
         this.tasks = this.tasks.filter((t) => t !== task);
     }
+
+    store() {
+        localStorage[this.name] = JSON.stringify(this);
+    }
+
+    unstore() {
+        localStorage.getItem(this.name);
+    }
 }
 
 class Task {
@@ -187,6 +194,14 @@ class Task {
 
     changePriority(priority) {
         this.priority = priority;
+    }
+
+    store() {
+        localStorage[this.title] = JSON.stringify(this);
+    }
+
+    unstore() {
+        localStorage.removeItem(this.title);
     }
 }
 
@@ -212,12 +227,19 @@ const addEventListeners = (function () {
         const project = new Project();
         projects.push(project);
         dom.addProject(project);
+        localStorage['projects'] = JSON.stringify(projects);
+        project.store();
     });
 
     deleteProjectBtn.addEventListener('click', () => {
         for (let i = 0; i < projects.length; i++) {
             if (projects[i].name === selectedProjectTitle) {
+                projects[i].unstore();
+                for (task of projects[i].tasks) {
+                    task.unstore();
+                }
                 projects.splice(i, 1);
+                localStorage['projects'] = projects;
                 break;
             }
         }
@@ -231,6 +253,8 @@ const addEventListeners = (function () {
         projects.forEach((project) => {
             if (project.name === selectedProjectTitle) {
                 project.addTask(task);
+                project.store();
+                task.store();
             }
         });
         dom.addTask(task);
@@ -242,6 +266,8 @@ const addEventListeners = (function () {
                 if (task.title === selectedTask) {
                     project.removeTask(task);
                     dom.removeTask();
+                    task.unstore();
+                    project.store();
                 }
             });
         });
