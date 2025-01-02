@@ -97,9 +97,7 @@ class DOM {
     }
 
     addTask(task) {
-        const projectTaskCont = document.querySelector(
-            '.project-tasks-selected'
-        );
+        let projectTaskCont = document.querySelector('.project-tasks-selected');
         const taskCont = document.createElement('div');
         taskCont.addEventListener('click', () => {
             selectedTask = task.title;
@@ -161,8 +159,8 @@ class DOM {
 }
 
 class Project {
-    constructor() {
-        this.name = prompt('Enter project name');
+    constructor(name) {
+        this.name = name;
         this.tasks = [];
     }
 
@@ -173,35 +171,19 @@ class Project {
     removeTask(task) {
         this.tasks = this.tasks.filter((t) => t !== task);
     }
-
-    store() {
-        localStorage[this.name] = JSON.stringify(this);
-    }
-
-    unstore() {
-        localStorage.getItem(this.name);
-    }
 }
 
 class Task {
-    constructor(title, description) {
+    constructor(title, description, date) {
         this.title = title;
         this.description = description;
-        this.date = format(new Date(), 'MM/dd/yyyy');
+        this.date = date;
         this.priority = 'Low';
         this.checked = false;
     }
 
     changePriority(priority) {
         this.priority = priority;
-    }
-
-    store() {
-        localStorage[this.title] = JSON.stringify(this);
-    }
-
-    unstore() {
-        localStorage.removeItem(this.title);
     }
 }
 
@@ -224,22 +206,17 @@ const addEventListeners = (function () {
     });
 
     addProjectBtn.addEventListener('click', () => {
-        const project = new Project();
+        const project = new Project(prompt('Enter project name'));
         projects.push(project);
         dom.addProject(project);
         localStorage['projects'] = JSON.stringify(projects);
-        project.store();
     });
 
     deleteProjectBtn.addEventListener('click', () => {
         for (let i = 0; i < projects.length; i++) {
             if (projects[i].name === selectedProjectTitle) {
-                projects[i].unstore();
-                for (task of projects[i].tasks) {
-                    task.unstore();
-                }
                 projects.splice(i, 1);
-                localStorage['projects'] = projects;
+                localStorage['projects'] = JSON.stringify(projects);
                 break;
             }
         }
@@ -249,12 +226,15 @@ const addEventListeners = (function () {
     addTaskBtn.addEventListener('click', () => {
         const title = prompt('Enter task title');
         const description = prompt('Enter task description');
-        const task = new Task(title, description);
+        const task = new Task(
+            title,
+            description,
+            format(new Date(), 'MM/dd/yyyy')
+        );
         projects.forEach((project) => {
             if (project.name === selectedProjectTitle) {
                 project.addTask(task);
-                project.store();
-                task.store();
+                localStorage['projects'] = JSON.stringify(projects);
             }
         });
         dom.addTask(task);
@@ -266,12 +246,31 @@ const addEventListeners = (function () {
                 if (task.title === selectedTask) {
                     project.removeTask(task);
                     dom.removeTask();
-                    task.unstore();
-                    project.store();
+                    localStorage['projects'] = JSON.stringify(projects);
                 }
             });
         });
     });
+
+    let projectsStorage = localStorage['projects'];
+    if (projectsStorage) {
+        projectsStorage = JSON.parse(projectsStorage);
+        for (let projectData of projectsStorage) {
+            let project = new Project(projectData.name);
+            project.tasks = projectData.tasks.map(
+                (taskData) => new Task(taskData.title, taskData.description)
+            );
+            selectedProjectTitle = projectData.name;
+            projects.push(project);
+            dom.clickProject();
+            dom.addProject(project);
+            for (let task of project.tasks) {
+                dom.addTask(task);
+            }
+            dom.unclickAllProjects();
+        }
+        selectedProjectTitle = '';
+    }
 })();
 
 addEventListeners;
